@@ -16,8 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from women.views import pageNotFound
+
 urlpatterns = [
     # path('women/', include('women.urls')),  # http://127.0.0.1:8000/women/
     path('', include('women.urls')),  # http://127.0.0.1:8000/
     path('admin/', admin.site.urls),
 ]
+
+# handler404 handler403 handler500 handler400 при DEBUG = False
+handler404 = pageNotFound

@@ -1,8 +1,11 @@
-from django.urls import path
+from django.urls import path, re_path
 
-from . import views
+from .views import *
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('cats/', views.categories, name='categories'),  # http://127.0.0.1:8000/cats/
+    path('', index, name='home'),
+    # int str slug uuid path
+    path('cats_old/', categories_old, name='categories_old'),  # http://127.0.0.1:8000/cats_old/
+    path('cats/<int:catid>/', categories, name='categories'),  # http://127.0.0.1:8000/cats/1/
+    re_path(r'^archive/(?P<year>[0-9]{4})/', archive, name='archive'),  # http://127.0.0.1:8000/cats/
 ]
