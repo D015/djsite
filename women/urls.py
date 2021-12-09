@@ -4,6 +4,7 @@ from .views import *
 
 urlpatterns = [
     path('', index, name='home'),
+    path('about/', about, name='about'),
     # int str slug uuid path
     path('cats_old/', categories_old, name='categories_old'),  # http://127.0.0.1:8000/cats_old/
     path('cats/<int:catid>/', categories, name='categories'),  # http://127.0.0.1:8000/cats/1/
