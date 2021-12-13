@@ -1,12 +1,12 @@
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView
-
 from django.shortcuts import render, redirect, get_object_or_404
-
 from django.http import HttpResponse, HttpResponseNotFound, Http404
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import AddPostForm
 from .models import *
+from .utils import DataMixin
 
 
 # def index(request):
@@ -21,18 +21,15 @@ from .models import *
 #         'cat_selected': 0,
 #     }
 #     return render(request, 'women/index.html', context=context)
-class WomenHome(ListView):
+class WomenHome(DataMixin, ListView):
     model = Women
     template_name = 'women/index.html'
     context_object_name = 'posts'
-    extra_context = {'title': 'Главная страница'}
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Главная страница'
-        context['cat_selected'] = 0
-        # context['menu'] = menu  # если меню надо передать как динамический элемент
-        return context
+        c_def = self.get_user_context(title="Главная страница")
+        return dict(list(context.items()) + list(c_def.items()))
 
     def get_queryset(self):
         return Women.objects.filter(is_published=True)
@@ -81,16 +78,16 @@ def about(request):
 #
 #     return render(request, 'women/addpage.html',
 #                   {'form': form, 'title': 'Добавление статьи'})
-class AddPage(CreateView):
+class AddPage(LoginRequiredMixin, DataMixin, CreateView):
     form_class = AddPostForm
     template_name = 'women/addpage.html'
     success_url = reverse_lazy('home')
+    login_url = reverse_lazy('home')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Добавление статьи'
-        # context['menu'] = menu
-        return context
+        c_def = self.get_user_context(title="Добавление статьи")
+        return dict(list(context.items()) + list(c_def.items()))
 
 
 def contact(request):
@@ -112,7 +109,7 @@ def login(request):
 #     }
 #
 #     return render(request, 'women/post.html', context=context)
-class ShowPost(DetailView):
+class ShowPost(DataMixin, DetailView):
     model = Women
     template_name = 'women/post.html'
     slug_url_kwarg = 'post_slug'
@@ -120,9 +117,8 @@ class ShowPost(DetailView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = context['post'].title
-        # context['menu'] = menu
-        return context
+        c_def = self.get_user_context(title=context['post'].title)
+        return dict(list(context.items()) + list(c_def.items()))
 
 
 def pageNotFound(request, exception):
@@ -144,7 +140,7 @@ def pageNotFound(request, exception):
 #     }
 #
 #     return render(request, 'women/index.html', context=context)
-class WomenCategory(ListView):
+class WomenCategory(DataMixin, ListView):
     model = Women
     template_name = 'women/index.html'
     context_object_name = 'posts'
@@ -156,7 +152,8 @@ class WomenCategory(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Категория - ' + str(context['posts'][0].cat)
-        # context['menu'] = menu # если меню надо передать как динамический элемент
-        context['cat_selected'] = context['posts'][0].cat_id
-        return context
+        c_def = self.get_user_context(
+            title='Категория - ' + str(context['posts'][0].cat.name),
+            cat_selected=context['posts'][0].cat_id)
+
+        return dict(list(context.items()) + list(c_def.items()))
