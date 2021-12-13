@@ -45,7 +45,12 @@ class Women(models.Model):
         default=True, verbose_name="Публикация"
     )
     cat = models.ForeignKey(
-        Category, on_delete=models.PROTECT, verbose_name="Категории"
+        Category, on_delete=models.PROTECT,
+        verbose_name="Категории",
+        # сли мы хотим переименовать атрибут women_set, то для этого
+        # в классе ForeignKey вторичной модели Women
+        # следует дополнительно прописать параметр
+        # related_name='get_posts',
     )
 
     class Meta:
