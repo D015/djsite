@@ -47,7 +47,7 @@ class Women(models.Model):
     cat = models.ForeignKey(
         Category, on_delete=models.PROTECT,
         verbose_name="Категории",
-        # сли мы хотим переименовать атрибут women_set, то для этого
+        # Если мы хотим переименовать атрибут women_set, то для этого
         # в классе ForeignKey вторичной модели Women
         # следует дополнительно прописать параметр
         # related_name='get_posts',
