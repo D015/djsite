@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView
 from django.shortcuts import render, redirect, get_object_or_404
@@ -36,8 +37,13 @@ class WomenHome(DataMixin, ListView):
 
 
 def about(request):
+    contact_list = Women.objects.all()
+    paginator = Paginator(contact_list, 3)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     # return render(request, 'women/about.html', {'menu': menu, 'title': 'О сайте'})
-    return render(request, 'women/about.html', {'title': 'О сайте'})
+    return render(request, 'women/about.html', {'page_obj': page_obj, 'title': 'О сайте'})
 
 
 # def categories_old(request):
@@ -60,10 +66,10 @@ def about(request):
 #     return HttpResponse(f"<h1>Архив по категориям</h1><p>{year}</p>")
 
 
-def about(request):
-    return render(request, 'women/about.html',
-                  # {'menu': menu, 'title': 'О сайте'})
-                  {'title': 'О сайте'})
+# def about(request):
+#     return render(request, 'women/about.html',
+#                   # {'menu': menu, 'title': 'О сайте'})
+#                   {'title': 'О сайте'})
 
 
 # def addpage(request):
@@ -118,6 +124,9 @@ class ShowPost(DataMixin, DetailView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         c_def = self.get_user_context(title=context['post'].title)
+
+        # return context | c_def  # от 3.9
+        # return {**context, **c_def}  # до и после 3.9
         return dict(list(context.items()) + list(c_def.items()))
 
 
