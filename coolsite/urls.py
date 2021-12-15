@@ -21,9 +21,10 @@ from coolsite import settings
 from women.views import pageNotFound
 
 urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('captcha/', include('captcha.urls')),
     # path('women/', include('women.urls')),  # http://127.0.0.1:8000/women/
     path('', include('women.urls')),  # http://127.0.0.1:8000/
-    path('admin/', admin.site.urls),
 ]
 
 if settings.DEBUG:
