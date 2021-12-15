@@ -1,10 +1,12 @@
 from django.urls import path, re_path
+from django.views.decorators.cache import cache_page
 
 from .views import *
 
 urlpatterns = [
     # path('', index, name='home'),
     path('', WomenHome.as_view(), name='home'),
+    # path('', cache_page(60)(WomenHome.as_view()), name='home'),
     path('about/', about, name='about'),
     # int str slug uuid path
     # path('cats_old/', categories_old, name='categories_old'),  # http://127.0.0.1:8000/cats_old/
